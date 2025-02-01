@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from .serializers import ProductSerializer
 import json
 import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+import numpy as np
+import datetime as dt
 
 
 # views.py
@@ -61,4 +65,64 @@ def decrement_stock(request, product_id):
 
 @api_view(["POST"])
 def predict_demand(request):
-    model=tf.keras.load_model("predictive.keras")
+    now=datetime.now()
+    model = tf.keras.models.load_model("predictive.keras")
+    GNP=23.2 *(10**11)
+    import_duties=6000
+    products=Product.objects.all()
+    states=['Maharashtra',
+ 'Uttar Pradesh',
+ 'Tamil Nadu',
+ 'Karnataka',
+ 'Gujarat',
+ 'Rajasthan',
+ 'West Bengal',
+ 'Andhra Pradesh',
+ 'Telangana',
+ 'Kerala',
+ 'Delhi',
+ 'Punjab',
+ 'Haryana',
+ 'Madhya Pradesh',
+ 'Bihar',
+ 'Odisha',
+ 'Jharkhand',
+ 'Chhattisgarh',
+ 'Assam',
+ 'Uttarakhand',
+ 'Himachal Pradesh',
+ 'Goa',
+ 'Tripura',
+ 'Manipur',
+ 'Meghalaya',
+ 'Nagaland',
+ 'Arunachal Pradesh',
+ 'Mizoram',
+ 'Sikkim']
+    demand={}
+    arr=np.zeros(29)
+    arr2=np.zeros(7)
+    laptop_models=['Inspiron 15', 'Vostro 14', 'XPS 13', 'XPS 15', 'Latitude 14',
+       'Gaming G15', 'Precision 5570']
+
+    for prod in products:
+        prices=float(prod.price)
+        prod_name=prod.name
+        state=request.data.get("state")
+        
+        index=states.index(state)
+        arr[index]=1
+
+        index2=laptop_models(name)
+        arr2[index2]=1
+        
+        prices=sc.fit_transform()
+        
+        X_input=np.array([int(now.month), int(prices), GNP, import_duties]+ arr.tolist()+ arr2.tolist())
+
+        
+        
+    
+    
+    
+    
