@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ProductSerializer
 import json
+import tensorflow as tf
 
 
 # views.py
@@ -57,3 +58,7 @@ def decrement_stock(request, product_id):
         return Response({"error": "Stock cannot be negative"}, status=400)
     except Product.DoesNotExist:
         return Response({"error": "Product not found"}, status=404)
+
+@api_view(["POST"])
+def predict_demand(request):
+    model=tf.keras.load_model("predictive.keras")
