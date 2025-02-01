@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 import datetime as dt
+from joblib import load
 
 
 # views.py
@@ -116,10 +117,13 @@ def predict_demand(request):
         index2=laptop_models(name)
         arr2[index2]=1
         
-        prices=sc.fit_transform()
+        scaler=load("scaler.joblib")
         
-        X_input=np.array([int(now.month), int(prices), GNP, import_duties]+ arr.tolist()+ arr2.tolist())
+        
+        X_input=pd.DataFame([int(now.month), int(prices), GNP, import_duties]+ arr.tolist()+ arr2.tolist())
+        X_input=scaler.transform(X_input)
 
+        output=model.predict(X_input)
         
         
     
