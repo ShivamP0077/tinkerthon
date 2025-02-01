@@ -124,6 +124,8 @@ def predict_demand(request):
         X_input=scaler.transform(X_input)
 
         output=model.predict(X_input)
+
+return "hello"
         
         
     
