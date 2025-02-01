@@ -1,70 +1,124 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+"use client";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import axiosInstance from "@/utils/axios";
 
-const forecastData = [
-  { id: 1, product: "Product X", currentDemand: 100, predictedDemand: 120, percentageChange: 20 },
-  { id: 2, product: "Product Y", currentDemand: 80, predictedDemand: 75, percentageChange: -6.25 },
-  { id: 3, product: "Product Z", currentDemand: 50, predictedDemand: 60, percentageChange: 20 },
-]
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const INDIAN_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+];
 
 export default function ForecastPage() {
-  const averageDemandChange = (
-    forecastData.reduce((sum, item) => sum + item.percentageChange, 0) / forecastData.length
-  ).toFixed(2)
-  const highestDemandIncrease = Math.max(...forecastData.map((item) => item.percentageChange))
-  const lowestDemandChange = Math.min(...forecastData.map((item) => item.percentageChange))
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<any>(false);
+
+  const fetchData = async (state: string) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.post(`http://127.0.0.1:8000/api/`, {
+        location: state,
+      });
+      setData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
+    fetchData(state);
+  };
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Demand Forecast</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Demand Change</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{averageDemandChange}%</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Highest Demand Increase</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{highestDemandIncrease}%</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lowest Demand Change</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{lowestDemandChange}%</div>
-          </CardContent>
-        </Card>
+      <h2 className="text-2xl font-bold mt-8">
+        Individual Product Demand Forecasts
+      </h2>
+
+      <div className="flex items-center space-x-4">
+        <span>State:</span>
+        <Select value={selectedState} onValueChange={handleStateChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select a state" />
+          </SelectTrigger>
+          <SelectContent>
+            {INDIAN_STATES.map((state) => (
+              <SelectItem key={state} value={state}>
+                {state}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      <h2 className="text-2xl font-bold mt-8">Individual Product Forecasts</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Product</TableHead>
-            <TableHead>Current Demand</TableHead>
-            <TableHead>Predicted Demand</TableHead>
-            <TableHead>Percentage Change</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {forecastData.map((item) => (
+      {loading ? (
+        <div className="text-center">Loading...</div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Current Stock</TableHead>
+              <TableHead>Predicted Demand</TableHead>
+              <TableHead>Diffrance</TableHead>
+            </TableRow>
+          </TableHeader>
+          {/* <TableBody>
+          {products.map((item) => (
             <TableRow key={item.id}>
-              <TableCell>{item.product}</TableCell>
-              <TableCell>{item.currentDemand}</TableCell>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.stock}</TableCell>
               <TableCell>{item.predictedDemand}</TableCell>
               <TableCell>{item.percentageChange}%</TableCell>
             </TableRow>
           ))}
-        </TableBody>
-      </Table>
+        </TableBody> */}
+        </Table>
+      )}
     </div>
-  )
+  );
 }
-

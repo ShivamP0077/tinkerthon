@@ -1,4 +1,4 @@
-from .models import Product
+from .models import Product, Sell
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ProductSerializer
@@ -9,9 +9,13 @@ import json
 @api_view(["POST"])
 def add_product(request):
     serializer = ProductSerializer(data=request.data)
+    print("jsdfhjadsh")
     if serializer.is_valid():
+        print(request.data)
         serializer.save()
+        print("bye")
         return Response({"message": "Product added", "id": serializer.data["id"]})
+    print("hhd")
     return Response(serializer.errors, status=400)
 
 
@@ -36,24 +40,31 @@ def change_stock(request, product_id):
 
 
 @api_view(["POST"])
-def increment_stock(request, product_id):
-    try:
-        product = Product.objects.get(id=product_id)
-        product.stock += 1
-        product.save()
-        return Response({"message": "Stock incremented"})
-    except Product.DoesNotExist:
-        return Response({"error": "Product not found"}, status=404)
+def Update(request):
+    product = Product.objects.get(id=request.data.get("productId"))
+    product.stock = request.data.get("stock")
+    product.save()
+    return Response({"message": "Store product Updates"})
 
 
 @api_view(["POST"])
-def decrement_stock(request, product_id):
-    try:
-        product = Product.objects.get(id=product_id)
-        if product.stock > 0:
-            product.stock -= 1
-            product.save()
-            return Response({"message": "Stock decremented"})
-        return Response({"error": "Stock cannot be negative"}, status=400)
-    except Product.DoesNotExist:
-        return Response({"error": "Product not found"}, status=404)
+def Sell1(request):
+    product = request.data.get("productId")
+    quantity = request.data.get("quantity")
+    print(
+        request.data.get("productId"),
+    )
+    product = Product.objects.get(id=product)
+    location = request.data.get("location")
+    print(product)
+    sell = Sell(product=product, state=location, quantity=quantity)
+    sell.save()
+    if product.stock < request.data.get("quantity"):
+        return Response(
+            {
+                "message": "The current stock in the inventory is less then the quantity you want to deduct"
+            }
+        )
+    product.stock -= request.data.get("quantity")
+    product.save()
+    return Response({"message": "done"})

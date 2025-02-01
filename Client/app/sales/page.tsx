@@ -21,11 +21,9 @@ type CompletedNotification = {
 }
 
 const initialSalesData: Sale[] = [
-  { id: 1, store: "Store A", product: "Product X", quantity: 50, revenue: 4999.5 },
-  { id: 2, store: "Store B", product: "Product Y", quantity: 30, revenue: 1499.7 },
-  { id: 3, store: "Store C", product: "Product Z", quantity: 20, revenue: 2999.8 },
-  { id: 4, store: "Store A", product: "Product Y", quantity: 40, revenue: 1999.6 },
-  { id: 5, store: "Store B", product: "Product X", quantity: 25, revenue: 2499.75 },
+  { id: 1, store: "Vyom Computer", product: "Vostro 14", quantity: 14, revenue: 4999.5 },
+  { id: 2, store: "Dell Store", product: "XPS 13", quantity: 12, revenue: 1499.7 },
+  { id: 3, store: "Mohit Cpmputers", product: "Vostro 14", quantity: 20, revenue: 2999.8 },
 ]
 
 export default function SalesPage() {
@@ -35,31 +33,31 @@ export default function SalesPage() {
   useEffect(() => {
     // In a real application, you would fetch this data from your API
     const mockCompletedNotifications: CompletedNotification[] = [
-      { id: 1, retailer: "Store A", product: "Product X", quantity: 15, date: "2023-04-16" },
-      { id: 2, retailer: "Store B", product: "Product Y", quantity: 12, date: "2023-04-17" },
+      { id: 1, retailer: "Vyom Computers", product: "Vostro 14", quantity: 15, date: "2023-04-16" },
+      { id: 2, retailer: "Mohit Computers", product: "Vostro 14", quantity: 12, date: "2023-04-17" },
     ]
     setCompletedNotifications(mockCompletedNotifications)
 
     // Update sales data with completed notifications
-    const updatedSalesData = [...salesData]
-    mockCompletedNotifications.forEach((notification) => {
-      const saleIndex = updatedSalesData.findIndex(
-        (sale) => sale.store === notification.retailer && sale.product === notification.product,
-      )
-      if (saleIndex !== -1) {
-        updatedSalesData[saleIndex].quantity += notification.quantity
-        updatedSalesData[saleIndex].revenue += notification.quantity * 100 // Assuming $100 per unit for simplicity
-      } else {
-        updatedSalesData.push({
-          id: updatedSalesData.length + 1,
-          store: notification.retailer,
-          product: notification.product,
-          quantity: notification.quantity,
-          revenue: notification.quantity * 100,
-        })
-      }
-    })
-    setSalesData(updatedSalesData)
+    // const updatedSalesData = [...salesData]
+    // mockCompletedNotifications.forEach((notification) => {
+    //   const saleIndex = updatedSalesData.findIndex(
+    //     (sale) => sale.store === notification.retailer && sale.product === notification.product,
+    //   )
+    //   if (saleIndex !== -1) {
+    //     updatedSalesData[saleIndex].quantity += notification.quantity
+    //     updatedSalesData[saleIndex].revenue += notification.quantity * 100 // Assuming $100 per unit for simplicity
+    //   } else {
+    //     updatedSalesData.push({
+    //       id: updatedSalesData.length + 1,
+    //       store: notification.retailer,
+    //       product: notification.product,
+    //       quantity: notification.quantity,
+    //       revenue: notification.quantity * 100,
+    //     })
+    //   }
+    // })
+    // setSalesData(updatedSalesData)
   }, []) // Added salesData to the dependency array
 
   const totalRevenue = salesData.reduce((sum, sale) => sum + sale.revenue, 0)
