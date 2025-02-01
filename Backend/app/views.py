@@ -114,13 +114,13 @@ def predict_demand(request):
         index=states.index(state)
         arr[index]=1
 
-        index2=laptop_models(name)
+        index2=laptop_models.index(prod_name)
         arr2[index2]=1
         
         scaler=load("scaler.joblib")
         
         
-        X_input=pd.DataFame([int(now.month), int(prices), GNP, import_duties]+ arr.tolist()+ arr2.tolist())
+        X_input=pd.DataFrame([int(now.month), int(prices), GNP, import_duties]+ arr.tolist()+ arr2.tolist())
         X_input=scaler.transform(X_input)
 
         output=model.predict(X_input)
