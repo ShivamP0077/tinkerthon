@@ -72,7 +72,7 @@ export default function SalesPage() {
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{totalRevenue.toFixed(2)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -100,7 +100,7 @@ export default function SalesPage() {
               <TableCell>{sale.store}</TableCell>
               <TableCell>{sale.product}</TableCell>
               <TableCell>{sale.quantity}</TableCell>
-              <TableCell>${sale.revenue.toFixed(2)}</TableCell>
+              <TableCell>{sale.revenue.toFixed(2)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

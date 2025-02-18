@@ -55,15 +55,34 @@ export default function ForecastPage() {
   const [selectedState, setSelectedState] = useState<string>("");
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<any>(false);
+  const [loading1, setLoading1] = useState<any>(false);
+  const [graph, setGraph] = useState<string>("");
 
   const fetchData = async (state: string) => {
     setLoading(true);
+    setLoading1(true);
     try {
-      const response = await axiosInstance.post(`http://127.0.0.1:8000/api/`, {
-        location: state,
-      });
+      const response = await axiosInstance.post(
+        `http://127.0.0.1:8000/api/preDemand/`,
+        {
+          state: state,
+        }
+      );
+      console.log(response.data);
+
       setData(response.data);
       setLoading(false);
+
+      const response1 = await axiosInstance.post(
+        `http://127.0.0.1:8000/api/getData/`,
+        {
+          state: state,
+        }
+      );
+      console.log(response1.data.plot_list);
+
+      setGraph(response1.data);
+      setLoading1(false)
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -104,21 +123,47 @@ export default function ForecastPage() {
               <TableHead>Product Name</TableHead>
               <TableHead>Current Stock</TableHead>
               <TableHead>Predicted Demand</TableHead>
-              <TableHead>Diffrance</TableHead>
+              <TableHead>Difference</TableHead>
             </TableRow>
           </TableHeader>
-          {/* <TableBody>
-          {products.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.stock}</TableCell>
-              <TableCell>{item.predictedDemand}</TableCell>
-              <TableCell>{item.percentageChange}%</TableCell>
-            </TableRow>
-          ))}
-        </TableBody> */}
+          <TableBody>
+            {data &&
+              data.Product_name.map((product: any, index: any) => (
+                <TableRow key={product}>
+                  <TableCell>{product}</TableCell>
+                  <TableCell>{data.Stock[index]}</TableCell>
+                  <TableCell>
+                    {parseInt(data.demand[0][product].toFixed(2))}
+                  </TableCell>
+                  <TableCell>
+                    {parseInt(
+                      (data.demand[0][product] - data.Stock[index]).toFixed(2)
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
         </Table>
       )}
+      <h2 className="text-2xl font-bold mt-8">Graphs</h2>
+      <div className="flex justify-center items-center space-x-4">
+        {loading1 ? (
+          <div className="text-center">Loading...</div>
+        ) : (
+          <div className="flex">
+            {graph?.plot_list?.map((plot:any, index:any) => (
+              <div key={index} className="flex justify-center mt-4">
+                <img
+                  src={`data:image/png;base64,${plot}`}
+                  alt={`Graph ${index + 1}`}
+                  className="w-full max-w-2xl rounded-lg shadow-lg"
+                />
+              </div>
+            ))}
+           
+          </div>
+        )}
+      </div>
     </div>
   );
 }
